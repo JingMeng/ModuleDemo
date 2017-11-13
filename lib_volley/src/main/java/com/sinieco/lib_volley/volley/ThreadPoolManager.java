@@ -1,5 +1,7 @@
 package com.sinieco.lib_volley.volley;
 
+import android.util.Log;
+
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -38,7 +40,12 @@ public class ThreadPoolManager  {
     private RejectedExecutionHandler handler = new RejectedExecutionHandler() {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-
+            try {
+                queue.put(new FutureTask<Object>(r,null) {
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     };
 

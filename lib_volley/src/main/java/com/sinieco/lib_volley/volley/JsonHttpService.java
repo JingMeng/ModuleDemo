@@ -1,5 +1,7 @@
 package com.sinieco.lib_volley.volley;
 
+import android.util.Log;
+
 import com.sinieco.lib_volley.volley.inter.IHttpListener;
 import com.sinieco.lib_volley.volley.inter.IHttpService;
 
@@ -13,6 +15,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -41,21 +44,38 @@ public class JsonHttpService implements IHttpService {
     @Override
     public void excute() {
         httpPost = new HttpPost(url);
-//        if (requestData == null){
-//            try {
-//                throw new IllegalArgumentException("请求参数为空");
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
         ByteArrayEntity byteArrayEntity = new ByteArrayEntity(requestData);
         httpPost.setEntity(byteArrayEntity);
         try {
             httpClient.execute(httpPost,httpResponseHandler);
         } catch (IOException e) {
-
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public Map<String, String> getHttpHeadMap() {
+        return null;
+    }
+
+    @Override
+    public boolean cancle() {
+        return false;
+    }
+
+    @Override
+    public boolean isCancle() {
+        return false;
+    }
+
+    @Override
+    public boolean isPause() {
+        return false;
     }
 
     private class HttpResponseHandler implements ResponseHandler {

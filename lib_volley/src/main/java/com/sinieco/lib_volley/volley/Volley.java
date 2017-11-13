@@ -14,11 +14,11 @@ import java.util.concurrent.FutureTask;
 public class Volley {
 
     public static<T,M> void sendRequest(String url ,T params , Class<T> requestType, IDataListener listener){
+        IHttpService httpService = new JsonHttpService();
+        IHttpListener<M> httpListener = new JsonDealListener<>(requestType,listener);
         RequestHolder<T> holder = new RequestHolder<>() ;
         holder.setUrl(url);
-        IHttpService httpService = new JsonHttpService();
         holder.setHttpService(httpService);
-        IHttpListener<M> httpListener = new JsonDealListener<>(requestType,listener);
         holder.setHttpListener(httpListener);
         Httptask<T> task = new Httptask<>(holder);
         try {

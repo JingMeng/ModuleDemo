@@ -2,6 +2,7 @@ package com.sinieco.lib_volley.volley;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.sinieco.lib_volley.volley.inter.IDataListener;
@@ -45,11 +46,11 @@ public class JsonDealListener<M> implements IHttpListener {
         }
     }
 
-    private String getContent(InputStream is) {
+    private String getContent(InputStream is) throws IllegalAccessException, InstantiationException {
         String content = null ;
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder(content);
+            StringBuilder sb = new StringBuilder();
             String line = null ;
             try{
                 while ((line = br.readLine())!=null){
@@ -64,10 +65,12 @@ public class JsonDealListener<M> implements IHttpListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                return sb.toString();
             }
         }catch (Exception e){
             e.printStackTrace();
             mDataListener.onFail(e);
+            String.class.newInstance();
         }
         return content;
     }
