@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/lib_common" />
+            <option value="$PROJECT_DIR$/lib_db" />
             <option value="$PROJECT_DIR$/lib_volley" />
             <option value="$PROJECT_DIR$/module1" />
             <option value="$PROJECT_DIR$/module2" />

@@ -64,5 +64,4 @@ public class ThreadPoolManager  {
     public<T> void excute(FutureTask<T> task) throws InterruptedException {
         putTask(task);
     }
-
 }

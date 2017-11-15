@@ -15,6 +15,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.sinieco.lib_db.BaseDao;
+import com.sinieco.lib_db.BaseDaoFactory;
+import com.sinieco.lib_db.User;
+import com.sinieco.lib_db.UserDao;
 import com.sinieco.lib_volley.volley.JsonDealListener;
 import com.sinieco.lib_volley.volley.Volley;
 import com.sinieco.lib_volley.volley.download.DownLoadItemInfo;
@@ -106,14 +110,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(v.getId() == R.id.three){
             ARouter.getInstance().build("/three/c").navigation();
         }
+    }
+
+    public void insert(View view){
+        BaseDao baseDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
+        long startTime = System.currentTimeMillis();
+        User user = null ;
+        for(int i = 0 ;i <100 ; i++){
+            user = new User("张三","000000"+i,1.75,true,null);
+            baseDao.insert(user);
+        }
+        long useTime = System.currentTimeMillis() - startTime ;
+        Log.e("插入1000条数据用时",useTime+"毫秒");
+
+    }
+
+    public void update(View view){
+        BaseDao baseDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
+        User where = new User();
 
 
+        where.setName("张三");
+
+
+//        where.setLength(1.75);
+//        where.setMarried(true);
+
+        User entity = new User();
+        entity.setName("张二");
+
+        int update = baseDao.update(entity, where);
+        Log.e("修改数据",update+"条");
+    }
+
+    public void delete(View view){
+        BaseDao baseDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
+        User where = new User();
+        where.setName("张二");
+        int delete = baseDao.delete(where);
+        Log.e("修改数据",delete+"条");
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    public void query(View view){
+        BaseDao baseDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
+//        User user = new User();
+//        user.setPassword("000000"+10);
+//        List query = baseDao.query(user);
+
+        List query = baseDao.query("select * from tb_user", User.class);
+        Log.e("查询到 "+query.size()+"条数据\n",query.toString());
     }
 
 }
