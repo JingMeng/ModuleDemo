@@ -63,42 +63,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Log.e("失败",e.toString());
 //            }
 //        });
+
     }
 
     public void down(View view){
         Log.e("下载","------------->  开始下载文件");
         FileDownManager downloadManager = new FileDownManager();
-        downloadManager.down("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk", new IDownloadServiceCallback() {
-            @Override
-            public void onDownloadStatusChanged(DownLoadItemInfo downloadItemInfo) {
-                Log.e(TAG,"下载状态改变");
-            }
-
-            @Override
-            public void onTotalLengthReceived(DownLoadItemInfo downloadItemInfo) {
-                Log.e(TAG,"已接收大小"+downloadItemInfo.getCurrentLength());
-            }
-
-            @Override
-            public void onCurrentSizeChanged(DownLoadItemInfo downloadItemInfo, double downLenth, long speed) {
-                Log.e(TAG,"当前大小改变"+"downLength:"+downLenth+"   speed:"+speed);
-            }
-
-            @Override
-            public void onDownloadSuccess(DownLoadItemInfo downloadItemInfo) {
-                Log.e(TAG,"下载成功");
-            }
-
-            @Override
-            public void onDownloadPause(DownLoadItemInfo downloadItemInfo) {
-                Log.e(TAG,"下载暂停");
-            }
-
-            @Override
-            public void onDownloadError(DownLoadItemInfo downloadItemInfo, int var2, String var3) {
-                Log.e(TAG,"下载失败");
-            }
-        });
+        downloadManager.download("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk");
+//        downloadManager.down("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk", new IDownloadServiceCallback() {
+//            @Override
+//            public void onDownloadStatusChanged(DownLoadItemInfo downloadItemInfo) {
+//                Log.e(TAG,"下载状态改变");
+//            }
+//
+//            @Override
+//            public void onTotalLengthReceived(DownLoadItemInfo downloadItemInfo) {
+//                Log.e(TAG,"已接收大小"+downloadItemInfo.getCurrentLength());
+//            }
+//
+//            @Override
+//            public void onCurrentSizeChanged(DownLoadItemInfo downloadItemInfo, double downLenth, long speed) {
+//                Log.e(TAG,"当前大小改变"+"downLength:"+downLenth+"   speed:"+speed);
+//            }
+//
+//            @Override
+//            public void onDownloadSuccess(DownLoadItemInfo downloadItemInfo) {
+//                Log.e(TAG,"下载成功");
+//            }
+//
+//            @Override
+//            public void onDownloadPause(DownLoadItemInfo downloadItemInfo) {
+//                Log.e(TAG,"下载暂停");
+//            }
+//
+//            @Override
+//            public void onDownloadError(DownLoadItemInfo downloadItemInfo, int var2, String var3) {
+//                Log.e(TAG,"下载失败");
+//            }
+//        });
     }
 
     @Override

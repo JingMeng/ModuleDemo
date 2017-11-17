@@ -97,7 +97,9 @@ class FileDownService implements IHttpService {
     private class HttpResponseHandler implements ResponseHandler{
         @Override
         public Object handleResponse(HttpResponse httpResponse) throws IOException {
-            if(200 == httpResponse.getStatusLine().getStatusCode()){
+            int code = httpResponse.getStatusLine().getStatusCode() ;
+            Log.e("FileDownService","相应码"+code);
+            if(200 == code || 206 == code){
                 mHttpListener.onSuccess(httpResponse.getEntity());
             }else {
                 mHttpListener.onFail();

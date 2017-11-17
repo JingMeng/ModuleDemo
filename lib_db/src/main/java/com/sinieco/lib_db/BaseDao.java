@@ -23,8 +23,25 @@ import java.util.Set;
  */
 
 public abstract class BaseDao<T> implements IBaseDao<T> {
+    public SQLiteDatabase getSqLiteDatabase() {
+        return mSqLiteDatabase;
+    }
+
+    public void setSqLiteDatabase(SQLiteDatabase mSqLiteDatabase) {
+        this.mSqLiteDatabase = mSqLiteDatabase;
+    }
+
     private SQLiteDatabase mSqLiteDatabase ;
     private boolean mIsInit = false ;
+
+    public String getTableName() {
+        return mTableName;
+    }
+
+    public void setTableName(String mTableName) {
+        this.mTableName = mTableName;
+    }
+
     private String mTableName ;
     private Class<T> mEntityClass;
     private HashMap<String ,Field> cacheMap ;
@@ -51,6 +68,8 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
         }
         return mIsInit ;
     }
+
+    protected abstract String createTable(Class<T>  cls);
 
     protected void initCacheMap(){
         //从第一条数据开始，查询0条数据，用于获取所有的列名
@@ -316,24 +335,5 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
         }
     }
 
-    public String createTable(Class<T> cla) {
-        Field[] fields = cla.getFields();
-        String tableName = cla.getAnnotation(TableName.class)==null?cla.getSimpleName():cla.getAnnotation(TableName.class).value();
-        StringBuffer sb = new StringBuffer("create table if not exists "+tableName+"(");
-        for (Field field : fields) {
-            String columnName = null ;
-            field.setAccessible(true);
-            if(field.getAnnotation(ColumnName.class)!=null){
-                columnName = field.getAnnotation(ColumnName.class).value();
-            }else {
-                columnName = field.getName() ;
-            }
-            String typeString = getTypeString(field);
-            sb.append(columnName+typeString+",");
-        }
-        int i = sb.lastIndexOf(",");
-        sb.replace(i,i+1,")");
-        return sb.toString();
-    }
 
 }

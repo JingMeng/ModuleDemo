@@ -5,6 +5,7 @@ package com.sinieco.lib_volley.volley;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.sinieco.lib_volley.volley.inter.IHttpListener;
 import com.sinieco.lib_volley.volley.inter.IHttpService;
 
 import java.io.UnsupportedEncodingException;
@@ -19,9 +20,11 @@ public class Httptask<T> implements Runnable {
         service = holder.getHttpService() ;
         service.setUrl(holder.getUrl());
         service.setHttpListener(holder.getHttpListener());
-        T requestInfo = holder.getRequestInfo();
-        String request = JSON.toJSONString(requestInfo);
+        IHttpListener httpListener = holder.getHttpListener();
+        httpListener.addHeader(service.getHttpHeadMap());
         try {
+            T requestInfo = holder.getRequestInfo();
+            String request = JSON.toJSONString(requestInfo);
             service.setRequestData(request.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

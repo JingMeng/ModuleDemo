@@ -2,6 +2,7 @@ package com.sinieco.lib_volley.volley.download;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.sinieco.lib_volley.BuildConfig;
 import com.sinieco.lib_volley.volley.download.inter.IDownListener;
@@ -16,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author BaiMeng on 2017/11/9.
@@ -232,6 +234,15 @@ public class DownLoadListener implements IDownListener {
     @Override
     public void onFail() {
 
+    }
+
+    @Override
+    public void addHeader(Map headerMap) {
+        long length = mFile.length();
+        Log.e("addHeader","------------->>>>>>>>>>"+length);
+        if(length > 0L ){
+            headerMap.put("RANGE","bytes="+length+"-");
+        }
     }
 
     @Override

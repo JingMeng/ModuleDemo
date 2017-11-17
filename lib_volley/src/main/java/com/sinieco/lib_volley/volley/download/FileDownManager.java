@@ -3,9 +3,12 @@ package com.sinieco.lib_volley.volley.download;
 import android.os.Environment;
 import android.util.Log;
 
+import com.sinieco.lib_db.BaseDao;
+import com.sinieco.lib_db.BaseDaoFactory;
 import com.sinieco.lib_volley.volley.Httptask;
 import com.sinieco.lib_volley.volley.RequestHolder;
 import com.sinieco.lib_volley.volley.ThreadPoolManager;
+import com.sinieco.lib_volley.volley.download.en.Priority;
 import com.sinieco.lib_volley.volley.download.inter.IDownloadServiceCallback;
 import com.sinieco.lib_volley.volley.inter.IHttpListener;
 import com.sinieco.lib_volley.volley.inter.IHttpService;
@@ -21,6 +24,7 @@ import java.util.concurrent.FutureTask;
 public class FileDownManager {
     private byte [] lock  = new byte [0] ;
     private String mPath = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"xiazai";
+    DownLoadDao mDownLoadDao = (DownLoadDao) BaseDaoFactory.getInstance().getDataHelper(DownLoadDao.class,DownLoadItemInfo.class);
     public void down(String url,IDownloadServiceCallback callback){
         synchronized (lock){
             String[] strs = url.split("/");
@@ -30,9 +34,9 @@ public class FileDownManager {
                 fileParent.mkdirs();
             }
             File file = new File(fileParent,fileName);
-            if(file.exists()){
-                file.delete();
-            }
+//            if(file.exists()){
+//                file.delete();
+//            }
             DownLoadItemInfo downLoadItemInfo = new DownLoadItemInfo(url,file.getAbsolutePath());
             RequestHolder requestHolder = new RequestHolder();
             requestHolder.setUrl(url);
@@ -48,5 +52,28 @@ public class FileDownManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int download(String url){
+        String[] splits = url.split("/");
+        return download(url,mPath+File.separator+splits[splits.length-1]);
+    }
+
+    public int download(String url , String filePath){
+        String[] splits = url.split("/");
+        return download(url,filePath,splits[splits.length-1]);
+    }
+
+    public int download(String url , String filePath , String displayName){
+        return download(url ,filePath , displayName ,Priority.middle);
+    }
+
+    public int download(String url , String filePath, String displayName , Priority priority){
+        if(priority == null){
+            priority = Priority.low;
+        }
+        File file = new File(filePath);
+        DownLoadItemInfo downLoadItemInfo = null ;
+        downLoadItemInfo =
     }
 }

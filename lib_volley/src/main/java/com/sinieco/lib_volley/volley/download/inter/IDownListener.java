@@ -5,6 +5,8 @@ import com.sinieco.lib_volley.volley.inter.IHttpService;
 
 import org.apache.http.HttpEntity;
 
+import java.util.Map;
+
 /**
  * @author BaiMeng on 2017/11/9.
  */
@@ -13,4 +15,5 @@ public interface IDownListener extends IHttpListener {
     void setHttpService(IHttpService httpService);
     void setCancleCalle();
     void setPauseCallble();
+
 }
