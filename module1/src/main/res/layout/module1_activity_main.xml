@@ -21,18 +21,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="two"/>
+    <!--<Button-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:id="@+id/three"-->
+        <!--android:layout_marginTop="70dp"-->
+        <!--android:layout_marginLeft="50dp"-->
+        <!--android:layout_marginRight="50dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="three"/>-->
     <Button
+        android:onClick="login"
         android:gravity="center_horizontal"
-        android:id="@+id/three"
         android:layout_marginTop="70dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="three"/>
+        android:text="登录"/>
+
 
     <Button
-        android:onClick="down"
+        android:onClick="pictureInsert"
         android:gravity="center_horizontal"
         android:id="@+id/down"
         android:layout_marginTop="70dp"
@@ -40,7 +50,18 @@
         android:layout_marginRight="50dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="下载"/>
+        android:text="插入图片"/>
+
+    <!--<Button-->
+        <!--android:onClick="down"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:id="@+id/down"-->
+        <!--android:layout_marginTop="70dp"-->
+        <!--android:layout_marginLeft="50dp"-->
+        <!--android:layout_marginRight="50dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="下载"/>-->
 
     <!--<Button-->
         <!--android:onClick="query"-->

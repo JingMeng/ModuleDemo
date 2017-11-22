@@ -1,11 +1,13 @@
 package com.sinieco.lib_volley.volley.download;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.sinieco.lib_db.BaseDao;
 import com.sinieco.lib_db.annotation.ColumnName;
 import com.sinieco.lib_db.annotation.PrimaryKey;
 import com.sinieco.lib_db.annotation.TableName;
+import com.sinieco.lib_volley.volley.Httptask;
 import com.sinieco.lib_volley.volley.download.en.Priority;
 
 import java.lang.reflect.Field;
@@ -88,6 +90,7 @@ public class DownLoadDao extends BaseDao<DownLoadItemInfo> {
 
     public DownLoadItemInfo addRecord(String url , String filePath , String displayName , int priority){
         synchronized (DownLoadDao.class){
+            //如果数据库中已有此条记录返回null，如果没有插入数据并将此条记录返回
             DownLoadItemInfo existRecord = findRecord(url,filePath);
             if(existRecord == null){
                 DownLoadItemInfo record = new DownLoadItemInfo();
@@ -96,7 +99,7 @@ public class DownLoadDao extends BaseDao<DownLoadItemInfo> {
                 record.setCurrentLength(0L);
                 record.setId(generateRecordId());
                 record.setDisplayName(displayName);
-                record.setStatus(DownloadStatus.waitting.getValue());
+                record.setmStatus(DownloadStatus.waitting.getValue());
                 record.setTotalLength(0L);
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss");
                 record.setStartTime(format.format(new Date()));
@@ -184,24 +187,28 @@ public class DownLoadDao extends BaseDao<DownLoadItemInfo> {
     public String createTable(Class<DownLoadItemInfo> cla) {
         Field[] fields = cla.getFields();
         String tableName = cla.getAnnotation(TableName.class)==null?cla.getSimpleName():cla.getAnnotation(TableName.class).value();
-        StringBuffer sb = new StringBuffer("create table if not exists "+tableName+"(");
+        StringBuffer sb = new StringBuffer("create table if not exists "+tableName+"("+"id Integer primary key ,");
         for (Field field : fields) {
             String columnName = null ;
             String primaryKey = null ;
             field.setAccessible(true);
+            if(field.getAnnotation(PrimaryKey.class)!=null){
+                continue;
+            }
             if(field.getAnnotation(ColumnName.class)!=null){
                 columnName = field.getAnnotation(ColumnName.class).value();
-                if(field.getAnnotation(PrimaryKey.class)!=null){
-                    primaryKey = " primary key";
-                }
+
             }else {
                 columnName = field.getName() ;
             }
+
             String typeString = getTypeString(field);
-            sb.append(columnName+typeString+primaryKey+",");
+            sb.append(columnName+typeString+",");
         }
         int i = sb.lastIndexOf(",");
         sb.replace(i,i+1,")");
+
+
         return sb.toString();
     }
 

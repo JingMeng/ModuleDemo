@@ -1,5 +1,6 @@
 package com.sinieco.lib_volley.volley.download;
 
+import com.sinieco.lib_db.annotation.PrimaryKey;
 import com.sinieco.lib_volley.volley.Httptask;
 
 /**
@@ -7,7 +8,21 @@ import com.sinieco.lib_volley.volley.Httptask;
  */
 
 public class DownLoadItemInfo extends BaseEntity<DownLoadItemInfo> {
-    private String mUrl ;
+    public String mUrl ;
+    public String mFilePath ;
+    public Integer mStatus ;
+    public Long mCurrentLength ;
+    public Long mTotalLength ;
+    public transient Httptask mHttptask ;
+    @PrimaryKey
+    public Integer id ;
+    public String displayName ;
+    public String startTime ;
+    public String endTime ;
+    public String userId ;
+    public String httpTaskType ;
+    public Integer priority ;
+    public Integer stopMode ;
 
     public String getmFilePath() {
         return mFilePath;
@@ -17,11 +32,11 @@ public class DownLoadItemInfo extends BaseEntity<DownLoadItemInfo> {
         this.mFilePath = mFilePath;
     }
 
-    public DownloadStatus getmStatus() {
+    public Integer getmStatus() {
         return mStatus;
     }
 
-    public void setmStatus(DownloadStatus mStatus) {
+    public void setmStatus(Integer mStatus) {
         this.mStatus = mStatus;
     }
 
@@ -48,20 +63,6 @@ public class DownLoadItemInfo extends BaseEntity<DownLoadItemInfo> {
     public void setmHttptask(Httptask mHttptask) {
         this.mHttptask = mHttptask;
     }
-
-    private String mFilePath ;
-    private DownloadStatus mStatus ;
-    private Long mCurrentLength ;
-    private Long mTotalLength ;
-    private transient Httptask mHttptask ;
-    private Integer id ;
-    private String displayName ;
-    private String startTime ;
-    private String endTime ;
-    private String userId ;
-    private String httpTaskType ;
-    private Integer priority ;
-    private Integer stopMode ;
 
     public String getmUrl() {
         return mUrl;
@@ -135,12 +136,6 @@ public class DownLoadItemInfo extends BaseEntity<DownLoadItemInfo> {
         this.stopMode = stopMode;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    private Integer status ;
-
 
     public void setHttptask(Httptask httptask){
         this.mHttptask = httptask ;
@@ -166,11 +161,8 @@ public class DownLoadItemInfo extends BaseEntity<DownLoadItemInfo> {
         return mCurrentLength ;
     }
 
-    public void setStatus(DownloadStatus status){
-        this.mStatus = status ;
-    }
 
-    public DownloadStatus getStatus (){
+    public Integer getStatus (){
         return mStatus ;
     }
 
@@ -184,5 +176,25 @@ public class DownLoadItemInfo extends BaseEntity<DownLoadItemInfo> {
 
     public String getFilePath(){
         return mFilePath ;
+    }
+
+    @Override
+    public String toString() {
+        return "DownLoadItemInfo{" +
+                "mUrl='" + mUrl + '\'' +
+                ", mFilePath='" + mFilePath + '\'' +
+                ", mStatus=" + mStatus +
+                ", mCurrentLength=" + mCurrentLength +
+                ", mTotalLength=" + mTotalLength +
+                ", mHttptask=" + mHttptask +
+                ", id=" + id +
+                ", displayName='" + displayName + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", userId='" + userId + '\'' +
+                ", httpTaskType='" + httpTaskType + '\'' +
+                ", priority=" + priority +
+                ", stopMode=" + stopMode +
+                '}';
     }
 }

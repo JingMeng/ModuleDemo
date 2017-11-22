@@ -16,6 +16,17 @@ public class User {
     public Double length ;
     public Boolean isMarried ;
     public User son ;
+    public String _id ;
+    public Integer loginStatus ;
+
+    public int getLoginStatus() {
+        return loginStatus;
+    }
+
+    public void setLoginStatus(int loginStatus) {
+        this.loginStatus = loginStatus;
+    }
+
 
     public User() {
     }
@@ -81,6 +92,16 @@ public class User {
                 ", length=" + length +
                 ", isMarried=" + isMarried +
                 ", son=" + son +
-                '}'+"\n";
+                ", _id='" + _id + '\'' +
+                ", loginStatus=" + loginStatus +
+                '}';
+    }
+
+    public void setUser_id(String s) {
+        _id = s ;
+    }
+
+    public String getUser_id(){
+        return _id;
     }
 }

@@ -14,25 +14,43 @@ import java.util.concurrent.FutureTask;
  * @author BaiMeng on 2017/11/13.
  */
 
-public class UserDao<T> extends BaseDao<T> {
+public class UserDao extends BaseDao<User> {
     @Override
-    public String createTable(Class<T> cla) {
-        Field[] fields = cla.getFields();
-        String tableName = cla.getAnnotation(TableName.class)==null?cla.getSimpleName():cla.getAnnotation(TableName.class).value();
-        StringBuffer sb = new StringBuffer("create table if not exists "+tableName+"(");
-        for (Field field : fields) {
-            String columnName = null ;
-            field.setAccessible(true);
-            if(field.getAnnotation(ColumnName.class)!=null){
-                columnName = field.getAnnotation(ColumnName.class).value();
-            }else {
-                columnName = field.getName() ;
+    public String createTable(Class<User> cla) {
+        return super.createTable(cla);
+    }
+
+    @Override
+    public long insert(User entity) {
+        List<User> users = query(new User());
+        User where = null ;
+        int isExist = 0 ;
+        for (User user : users) {
+            where = new User() ;
+            where.setUser_id(user.getUser_id());
+            if(user.getName().equals(entity.getName())){
+                entity.setLoginStatus(LoginStatus.online.getValue());
+                update(entity,user);
+                isExist++ ;
+                continue;
             }
-            String typeString = getTypeString(field);
-            sb.append(columnName+typeString+",");
+            user.setLoginStatus(LoginStatus.outline.getValue());
+            update(user, where);
         }
-        int i = sb.lastIndexOf(",");
-        sb.replace(i,i+1,")");
-        return sb.toString();
+        if(isExist != 0){
+            return isExist ;
+        }
+        entity.setLoginStatus(LoginStatus.online.getValue());
+        return super.insert(entity);
+    }
+
+    public User getCurrentUser() {
+        User where = new User();
+        where.setLoginStatus(LoginStatus.online.value);
+        List<User> onlineUser = query(where);
+        if(onlineUser.size()>0){
+            return onlineUser.get(0);
+        }
+        return  null ;
     }
 }

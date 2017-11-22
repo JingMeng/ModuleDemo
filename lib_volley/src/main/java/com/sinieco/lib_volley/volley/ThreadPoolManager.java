@@ -64,4 +64,14 @@ public class ThreadPoolManager  {
     public<T> void excute(FutureTask<T> task) throws InterruptedException {
         putTask(task);
     }
+
+    public<T> boolean removeTask(FutureTask futureTask) {
+        boolean result = false ;
+        if(queue.contains(futureTask)){
+            queue.remove(futureTask);
+        }else {
+            result = executor.remove(futureTask);
+        }
+        return result ;
+    }
 }

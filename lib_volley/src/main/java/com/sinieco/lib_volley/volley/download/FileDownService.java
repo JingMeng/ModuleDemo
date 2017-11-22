@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.sinieco.lib_volley.volley.inter.IHttpListener;
 import com.sinieco.lib_volley.volley.inter.IHttpService;
+import com.sinieco.moduledemo.utils.LogUtils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author BaiMeng on 2017/11/9.
@@ -31,6 +33,10 @@ class FileDownService implements IHttpService {
     private HttpClient httpClient = new DefaultHttpClient();
     private HttpGet httpGet ;
     private HttpResponseHandler responseHandler = new HttpResponseHandler() ;
+
+    private AtomicBoolean pause = new AtomicBoolean(false);
+    private AtomicBoolean cancle = new AtomicBoolean(false);
+
 
     @Override
     public void setUrl(String url) {
@@ -50,7 +56,6 @@ class FileDownService implements IHttpService {
     @Override
     public void excute() {
         httpGet = new HttpGet(mUrl);
-        Log.e("开始-----------",">>>>>>>>>>>>>>执行");
         constrcutHeader();
         try {
             httpClient.execute(httpGet,responseHandler);
@@ -65,13 +70,12 @@ class FileDownService implements IHttpService {
             String key = iterator.next();
             String value = header.get(key);
             httpGet.addHeader(key,value);
-            Log.e("key = "+key ,"    -----  value = "+value);
         }
     }
 
     @Override
     public void pause() {
-
+        pause.compareAndSet(false,true);
     }
 
     @Override
@@ -86,22 +90,24 @@ class FileDownService implements IHttpService {
 
     @Override
     public boolean isCancle() {
-        return false;
+        return cancle.get();
     }
 
     @Override
     public boolean isPause() {
-        return false;
+        return pause.get();
     }
 
     private class HttpResponseHandler implements ResponseHandler{
         @Override
         public Object handleResponse(HttpResponse httpResponse) throws IOException {
             int code = httpResponse.getStatusLine().getStatusCode() ;
-            Log.e("FileDownService","相应码"+code);
+            LogUtils.e("相应码---------->>>"+code);
             if(200 == code || 206 == code){
+                LogUtils.e("下载成功，相应码："+code);
                 mHttpListener.onSuccess(httpResponse.getEntity());
             }else {
+                LogUtils.e("下载失败");
                 mHttpListener.onFail();
             }
             return null;

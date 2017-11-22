@@ -9,12 +9,14 @@ import com.sinieco.lib_volley.volley.inter.IHttpListener;
 import com.sinieco.lib_volley.volley.inter.IHttpService;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.FutureTask;
 
 
 /**
  * Created by BaiMeng on 2017/11/3.
  */
 public class Httptask<T> implements Runnable {
+    private FutureTask futureTask ;
     private IHttpService service ;
     public Httptask(RequestHolder<T> holder) {
         service = holder.getHttpService() ;
@@ -34,5 +36,22 @@ public class Httptask<T> implements Runnable {
     @Override
     public void run() {
         service.excute();
+    }
+
+    public void pause() {
+        service.pause();
+        if(futureTask != null){
+            Log.e("------------------->>>>>>>>","任务被移除。");
+            ThreadPoolManager.getInstance().removeTask(futureTask);
+        }
+    }
+
+    public void start(){
+        futureTask = new FutureTask(this,null);
+        try {
+            ThreadPoolManager.getInstance().excute(futureTask);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

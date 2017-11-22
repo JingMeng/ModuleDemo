@@ -56,6 +56,7 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
             }else {
                 mTableName = entityClass.getSimpleName();
             }
+            Log.e("mSqLiteDatabase == null?  --->>>"," "+(mSqLiteDatabase == null? true : false) );
             if(!mSqLiteDatabase.isOpen()){
                 return false ;
             }
@@ -69,7 +70,25 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
         return mIsInit ;
     }
 
-    protected abstract String createTable(Class<T>  cls);
+    public String createTable(Class<T> cla) {
+        Field[] fields = cla.getFields();
+        String tableName = cla.getAnnotation(TableName.class)==null?cla.getSimpleName():cla.getAnnotation(TableName.class).value();
+        StringBuffer sb = new StringBuffer("create table if not exists "+tableName+"(");
+        for (Field field : fields) {
+            String columnName = null ;
+            field.setAccessible(true);
+            if(field.getAnnotation(ColumnName.class)!=null){
+                columnName = field.getAnnotation(ColumnName.class).value();
+            }else {
+                columnName = field.getName() ;
+            }
+            String typeString = getTypeString(field);
+            sb.append(columnName+typeString+",");
+        }
+        int i = sb.lastIndexOf(",");
+        sb.replace(i,i+1,")");
+        return sb.toString();
+    }
 
     protected void initCacheMap(){
         //从第一条数据开始，查询0条数据，用于获取所有的列名
@@ -227,7 +246,7 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
     }
 
     private List<T> getListFromCursor(Cursor cursor,T where) {
-        ArrayList<T> list = null;
+        ArrayList<T> list = new ArrayList<T>();
         if (cursor != null) {
             list = new ArrayList<>();
             while (cursor.moveToNext()) {
@@ -283,10 +302,12 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
                 field.set(item,f);
             }else if(field.getType() == Boolean.class){
                 String bool = cursor.getString(columnIndex);
-                if(bool.equals("true")){
-                    field.set(item,true);
-                }else {
-                    field.set(item,false);
+                if(bool != null){
+                    if(bool.equals("true")){
+                        field.set(item,true);
+                    }else{
+                        field.set(item,false);
+                    }
                 }
             }else {
                isSeted = false ;
@@ -318,7 +339,6 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
         }
 
         public String getWhereClause() {
-            Log.e("打印条件 ------------>>>>>",whereClause);
             return whereClause;
         }
 

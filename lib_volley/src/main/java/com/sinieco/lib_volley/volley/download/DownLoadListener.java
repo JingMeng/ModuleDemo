@@ -8,6 +8,7 @@ import com.sinieco.lib_volley.BuildConfig;
 import com.sinieco.lib_volley.volley.download.inter.IDownListener;
 import com.sinieco.lib_volley.volley.download.inter.IDownloadServiceCallback;
 import com.sinieco.lib_volley.volley.inter.IHttpService;
+import com.sinieco.moduledemo.utils.LogUtils;
 
 import org.apache.http.HttpEntity;
 
@@ -43,6 +44,7 @@ public class DownLoadListener implements IDownListener {
 
     @Override
     public void onSuccess(HttpEntity entity) {
+        mDownLoadItmeInfo.setTotalLength(entity.getContentLength());
         InputStream is = null ;
         try {
             is = entity.getContent();
@@ -66,70 +68,19 @@ public class DownLoadListener implements IDownListener {
         BufferedOutputStream bos = null;
         FileOutputStream fos = null ;
 
-//        try {
-//            fos = new FileOutputStream(mFile,true);
-//            bos = new BufferedOutputStream(fos);
-//            int length = 1 ;
-//            while ((length = is.read(buffer)) != -1){
-//                if(this.mHttpService.isCancle()){
-//                    mIDownloadServiceCallback.onDownloadError(mDownLoadItmeInfo,1,"用户取消了");
-//                    return;
-//                }
-//                if(this.mHttpService.isPause()){
-//                    mIDownloadServiceCallback.onDownloadError(mDownLoadItmeInfo,2,"用户暂停了");
-//                }
-//                bos.write(buffer,0,length);
-//                getLen += (length);
-//                receiveLen += (long)length ;
-//                calcSpeedLen += (long)length ;
-//                ++count ;
-//                if(receiveLen * 10L /totalLength >= 1L || count >= 5000){
-//                    currentTime = System.currentTimeMillis();
-//                    useTime = currentTime - startTime ;
-//                    startTime = currentTime ;
-//                    speed = 1000 * calcSpeedLen / useTime ;
-//                    count = 0 ;
-//                    calcSpeedLen = 0L ;
-//                    receiveLen = 0L ;
-//                    this.downloadLengthChange(this.mBreakPoint+getLen,totalLength,speed);
-//                }
-//                bos.close();
-//                is.close();
-//                if (dataLength != getLen) {
-//                    mIDownloadServiceCallback.onDownloadError(mDownLoadItmeInfo, 3, "下载长度不相等");
-//                } else {
-//                    this.downloadLengthChange(this.mBreakPoint + getLen, totalLength, speed);
-//                    this.mIDownloadServiceCallback.onDownloadSuccess(mDownLoadItmeInfo.copy());
-//                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return;
-//        }finally {
-//            if(bos != null){
-//                try {
-//                    bos.close();
-//                    if(entity != null){
-//                        is.close();
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-
-
         try {
             fos = new FileOutputStream(mFile, true);
             bos = new BufferedOutputStream(fos);
             int length = 1;
             while ((length = is.read(buffer)) != -1) {
                 if (this.mHttpService.isCancle()) {
+                    mDownLoadItmeInfo.setmStatus(DownloadStatus.failed.getValue());
                     mIDownloadServiceCallback.onDownloadError(mDownLoadItmeInfo, 1, "用户取消了");
                     return;
                 }
 
                 if (this.mHttpService.isPause()) {
+                    mDownLoadItmeInfo.setmStatus(DownloadStatus.pause.getValue());
                     mIDownloadServiceCallback.onDownloadError(mDownLoadItmeInfo, 2, "用户暂停了");
                     return;
                 }
@@ -153,18 +104,25 @@ public class DownLoadListener implements IDownListener {
             bos.close();
             is.close();
             if (dataLength != getLen) {
+                mDownLoadItmeInfo.setmStatus(DownloadStatus.failed.getValue());
                 mIDownloadServiceCallback.onDownloadError(mDownLoadItmeInfo, 3, "下载长度不相等");
             } else {
+                mDownLoadItmeInfo.setmStatus(DownloadStatus.finish.getValue());
                 this.downloadLengthChange(this.mBreakPoint + getLen, totalLength, speed);
                 this.mIDownloadServiceCallback.onDownloadSuccess(mDownLoadItmeInfo.copy());
             }
+            LogUtils.e("流读写完成");
+            mDownLoadItmeInfo.setmStatus(DownloadStatus.finish.getValue());
+            mIDownloadServiceCallback.onDownloadSuccess(mDownLoadItmeInfo);
 
         } catch (IOException ioException) {
+            LogUtils.e("IO异常    "+ioException.getMessage());
             if (this.mHttpService != null) {
 //                this.getHttpService().abortRequest();
             }
             return;
         } catch (Exception e) {
+            LogUtils.e("发生异常    "+e.getMessage());
             if (this.mHttpService != null) {
 //                this.getHttpService().abortRequest();
             }
@@ -202,7 +160,7 @@ public class DownLoadListener implements IDownListener {
     }
 
     private void downloadStatusChange(DownloadStatus downloading) {
-        mDownLoadItmeInfo.setStatus(downloading);
+        mDownLoadItmeInfo.setmStatus(downloading.getValue());
         final DownLoadItemInfo copyLoadItemInfo = mDownLoadItmeInfo.copy();
         if(mIDownloadServiceCallback != null){
             synchronized (this.mIDownloadServiceCallback){

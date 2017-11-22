@@ -1,6 +1,7 @@
 package com.sinieco.moudle1;
 
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,9 +23,13 @@ import com.sinieco.lib_db.UserDao;
 import com.sinieco.lib_volley.volley.JsonDealListener;
 import com.sinieco.lib_volley.volley.Volley;
 import com.sinieco.lib_volley.volley.download.DownLoadItemInfo;
+import com.sinieco.lib_volley.volley.download.DownloadStatus;
 import com.sinieco.lib_volley.volley.download.FileDownManager;
+import com.sinieco.lib_volley.volley.download.inter.IDownloadCallback;
 import com.sinieco.lib_volley.volley.download.inter.IDownloadServiceCallback;
 import com.sinieco.lib_volley.volley.inter.IDataListener;
+import com.sinieco.moduledemo.utils.LogUtils;
+import com.sinieco.moduledemo.utils.XPermissionUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,13 +50,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.handleMessage(msg);
         }
     };
+    private FileDownManager downloadManager;
+    private int id;
+    private UserDao userDao;
+    private int i = 0 ;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.module1_activity_main);
         findViewById(R.id.one).setOnClickListener(this);
         findViewById(R.id.two).setOnClickListener(this);
-        findViewById(R.id.three).setOnClickListener(this);
+    //    findViewById(R.id.three).setOnClickListener(this);
 //        Volley.sendRequest(url, null, HomeBean.class, new IDataListener<HomeBean>() {
 //            @Override
 //            public void onSuccess(HomeBean response) {
@@ -63,44 +73,87 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Log.e("失败",e.toString());
 //            }
 //        });
+        userDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
 
+
+        XPermissionUtils.requestPermissions(this, 0, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE}, new XPermissionUtils.OnPermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+
+            }
+
+            @Override
+            public void onPermissionDenied() {
+                finish() ;
+            }
+        });
+    }
+
+
+    public void login(View view){
+        User user = new User();
+        user.setName("V00"+(i++));
+        user.setPassword("123456"+i);
+        user.setUser_id("N000"+i);
+        userDao.insert(user);
+    }
+
+    public void pictureInsert(View view){
+        Picture picture = new Picture();
+        picture.setName("tupian.jpg");
+        picture.setPath("我也不知道在哪");
+        picture.setTime("现在");
+        PictureDao pictureDao = BaseDaoFactory.getInstance().getUserHelper(PictureDao.class, Picture.class);
+        pictureDao.insert(picture);
     }
 
     public void down(View view){
-        Log.e("下载","------------->  开始下载文件");
-        FileDownManager downloadManager = new FileDownManager();
-        downloadManager.download("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk");
-//        downloadManager.down("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk", new IDownloadServiceCallback() {
-//            @Override
-//            public void onDownloadStatusChanged(DownLoadItemInfo downloadItemInfo) {
-//                Log.e(TAG,"下载状态改变");
-//            }
-//
-//            @Override
-//            public void onTotalLengthReceived(DownLoadItemInfo downloadItemInfo) {
-//                Log.e(TAG,"已接收大小"+downloadItemInfo.getCurrentLength());
-//            }
-//
-//            @Override
-//            public void onCurrentSizeChanged(DownLoadItemInfo downloadItemInfo, double downLenth, long speed) {
-//                Log.e(TAG,"当前大小改变"+"downLength:"+downLenth+"   speed:"+speed);
-//            }
-//
-//            @Override
-//            public void onDownloadSuccess(DownLoadItemInfo downloadItemInfo) {
-//                Log.e(TAG,"下载成功");
-//            }
-//
-//            @Override
-//            public void onDownloadPause(DownLoadItemInfo downloadItemInfo) {
-//                Log.e(TAG,"下载暂停");
-//            }
-//
-//            @Override
-//            public void onDownloadError(DownLoadItemInfo downloadItemInfo, int var2, String var3) {
-//                Log.e(TAG,"下载失败");
-//            }
-//        });
+        LogUtils.e("------------->  开始下载文件");
+        downloadManager = new FileDownManager();
+        id = downloadManager.download("http://gdown.baidu.com/data/wisegame/8be18d2c0dc8a9c9/WPSOffice_177.apk");
+        LogUtils.e("下载文件的id："+ id);
+        downloadManager.addDownloadListener(new IDownloadCallback() {
+            @Override
+            public void onDownloadInfoAdd(int downloadId) {
+                Log.e("添加下载文件","downloadId  ------>>>>>>   "+ downloadId );
+            }
+
+            @Override
+            public void onDownloadInfoRemove(int downloadId) {
+                Log.e("移除下载文件","downloadId  ------>>>>>>   "+ downloadId );
+            }
+
+            @Override
+            public void onDownloadStatusChange(int downloadId, DownloadStatus status) {
+                Log.e("下载状态改变","downloadId  ------>>>>>>   "+ downloadId +  "DownloadStatus  ------>>>>>>   "+ status.getValue() );
+            }
+
+            @Override
+            public void onReceivedTotalLength(int downloadId, long totalLength) {
+                Log.e("接收问价总大小","downloadId  ------>>>>>>   "+ downloadId + "totalLength  ------>>>>>>   "+ totalLength );
+            }
+
+            @Override
+            public void onReceivedCurrentProgress(int downloadId, double downloadPercent, long downloadSpeed) {
+                Log.e("更新当前进度","downloadId  ------>>>>>>   "+ downloadId +"downloadPercent  ------>>>>>>   "+ downloadPercent +"downloadSpeed  ------>>>>>>   "+ downloadSpeed);
+            }
+
+            @Override
+            public void onDownloadSuccess(int downloadId) {
+                Log.e("下载文件成功","downloadId  ------>>>>>>   "+ downloadId );
+            }
+
+            @Override
+            public void onDownLoadError(int downloadId, int errorCode, String errorMsg) {
+                Log.e("下载失败,","   downloadId     "+downloadId+"  ----------->>>>  "+errorMsg);
+            }
+        });
+    }
+
+    public void pause(View view){
+        downloadManager.pause(id);
     }
 
     @Override
@@ -109,9 +162,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(this,ActivityOne.class));
         }else if (v.getId() == R.id.two){
             ARouter.getInstance().build("/two/b").navigation();
-        }else if(v.getId() == R.id.three){
-            ARouter.getInstance().build("/three/c").navigation();
         }
+//        else if(v.getId() == R.id.three){
+//            ARouter.getInstance().build("/three/c").navigation();
+//        }
     }
 
     public void insert(View view){
