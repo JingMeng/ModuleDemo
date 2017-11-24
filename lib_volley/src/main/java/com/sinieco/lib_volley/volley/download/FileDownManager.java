@@ -87,6 +87,7 @@ public class FileDownManager implements IDownloadServiceCallback {
         File file = new File(filePath);
         DownLoadItemInfo downLoadItemInfo = null ;
         downLoadItemInfo = mDownLoadDao.findRecord(url,filePath);
+        //之前没有添加任务，数据库中也没有下载记录
         if(downLoadItemInfo == null) {
             List<DownLoadItemInfo> samesFile = mDownLoadDao.findRecord(filePath);
             //有开始下载，但是没有下载完成的文件
@@ -158,6 +159,7 @@ public class FileDownManager implements IDownloadServiceCallback {
                     }
                 });
             }
+            //从下载任务集合中移除
             mDownLoadDao.removeRecordById(downId);
             return downLoadItemInfo.getId();
         }
@@ -165,14 +167,19 @@ public class FileDownManager implements IDownloadServiceCallback {
         if(priority != Priority.high){
             for (DownLoadItemInfo downing : allDowning) {
                 downing = mDownLoadDao.findSigleRecord(downing.getFilePath());
+                //如果此任务优先级为最高级，且正在下载。
                 if(downLoadItemInfo != null && downLoadItemInfo.getPriority()==Priority.high.getValue()){
                     if(downLoadItemInfo.getFilePath().equals(downing.getFilePath())){
+                        for (IDownloadCallback downListener : downListeners) {
+                            downListener.onDownLoadError(downLoadItemInfo.getId(),5,"此任务正在下载，请勿重复添加");
+                        }
                         return downLoadItemInfo.getId();
                     }
                    }
             }
         }
         DownLoadItemInfo newDownloadInfo = reallyDown(downLoadItemInfo);
+        //遍历正在下载的任务，暂停优先级较低的任务。
         if(priority == Priority.high || priority == Priority.middle){
             synchronized (allDowning){
                 for (DownLoadItemInfo loadItemInfo : allDowning) {
