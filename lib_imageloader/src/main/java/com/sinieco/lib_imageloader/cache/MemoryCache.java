@@ -1,7 +1,6 @@
 package com.sinieco.lib_imageloader.cache;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.util.LruCache;
 
 import com.sinieco.lib_imageloader.request.BitmapRequest;

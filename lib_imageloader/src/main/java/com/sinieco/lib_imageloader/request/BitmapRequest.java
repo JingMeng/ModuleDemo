@@ -9,7 +9,6 @@ import com.sinieco.lib_imageloader.policy.LoaderPolicy;
 import com.sinieco.lib_imageloader.utils.MD5Utils;
 
 import java.lang.ref.SoftReference;
-import java.util.Random;
 
 /**
  * @author BaiMeng on 2017/11/22.

@@ -3,6 +3,8 @@ package com.sinieco.lib_imageloader.cache;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.graphics.Bitmap;
+
 
 import com.sinieco.lib_imageloader.request.BitmapRequest;
 
