@@ -1,6 +1,7 @@
 package com.sinieco.lib_imageloader.loader;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.sinieco.lib_imageloader.cache.BitmapCache;
@@ -30,6 +31,7 @@ public abstract class AbstarctLoader implements Loader {
             bitmap = onLoad(request);
             cacheBitmap(request,bitmap);
         }
+        deliveryToUIThread(request,bitmap);
     }
 
     private void cacheBitmap(BitmapRequest request, Bitmap bitmap) {
@@ -60,5 +62,28 @@ public abstract class AbstarctLoader implements Loader {
 
     protected boolean hasFailedPlaceHolder(){
         return (mDisplayConfig != null && mDisplayConfig.failedImg >0) ;
+    }
+
+    private void deliveryToUIThread(final BitmapRequest request, final Bitmap bitmap) {
+        ImageView imageView = request.getImageView();
+        imageView.post(new Runnable() {
+            @Override
+            public void run() {
+                updateImageView(request,bitmap);
+            }
+        });
+    }
+
+    protected void updateImageView(BitmapRequest request, Bitmap bitmap){
+        ImageView imageView = request.getImageView();
+        if(bitmap != null && imageView.getTag().equals(request.getImageUri())){
+            imageView.setImageBitmap(bitmap);
+        }
+        if(bitmap == null && hasFailedPlaceHolder()){
+            imageView.setImageResource(mDisplayConfig.getFailedImg());
+        }
+        if(request.getImageListener() != null){
+            request.getImageListener().onComplete(imageView,bitmap,request.getImageUri());
+        }
     }
 }

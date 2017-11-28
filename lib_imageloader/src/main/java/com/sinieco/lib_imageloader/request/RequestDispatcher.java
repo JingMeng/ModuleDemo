@@ -25,6 +25,7 @@ public class RequestDispatcher extends Thread {
                 BitmapRequest request = mQueue.take();
                 String schema = parseSchema(request.getImageUri());
                 Loader loader = LoaderManager.getInstance().getLoader(schema);
+                loader.loadImage(request);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

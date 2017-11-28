@@ -9,6 +9,7 @@ import com.sinieco.lib_imageloader.policy.LoaderPolicy;
 import com.sinieco.lib_imageloader.utils.MD5Utils;
 
 import java.lang.ref.SoftReference;
+import java.util.Random;
 
 /**
  * @author BaiMeng on 2017/11/22.
@@ -24,6 +25,8 @@ public class BitmapRequest implements Comparable<BitmapRequest>{
     //图片Uri经过MD5加密后的名字，防止图片中有非法字符不能缓存。
     private String imageUriMD5 ;
     private SimpleImageLoader.ImageListener listener ;
+    private SimpleImageLoader.ImageListener imageListener;
+
     public BitmapRequest(ImageView img, String uri, DisplayConfig displayConfig, SimpleImageLoader.ImageListener listener) {
         this.imageViewSoft = new SoftReference<ImageView>(img);
         //设置tag防止显示错乱
@@ -104,4 +107,13 @@ public class BitmapRequest implements Comparable<BitmapRequest>{
     public ImageView getImageView(){
         return imageViewSoft.get();
     }
+
+    public String getImageUriMD5() {
+        return imageUriMD5;
+    }
+
+    public SimpleImageLoader.ImageListener getImageListener() {
+        return imageListener;
+    }
+
 }

@@ -49,4 +49,5 @@ dependencies {
     annotationProcessor "com.alibaba:arouter-compiler:$rootProject.annotationProcessor"
     compile project(':lib_volley')
     compile project(':lib_db')
+    compile project(':lib_imageloader')
 }
