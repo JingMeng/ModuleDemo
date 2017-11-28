@@ -1,6 +1,7 @@
 package com.sinieco.lib_imageloader.cache;
 
 import android.graphics.Bitmap;
+import android.util.LruCache;
 
 import com.sinieco.lib_imageloader.request.BitmapRequest;
 
@@ -9,18 +10,30 @@ import com.sinieco.lib_imageloader.request.BitmapRequest;
  */
 
 public class MemoryCache implements BitmapCache {
+    private LruCache<String,Bitmap> mLruCache ;
+
+    public MemoryCache(){
+        //当前可用内存的8/1
+        int maxSize  = (int)Runtime.getRuntime().freeMemory()/1024/8;
+        mLruCache = new LruCache<String,Bitmap>(maxSize){
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getHeight()*value.getWidth()/1024;
+            }
+        };
+    }
     @Override
     public Bitmap get(BitmapRequest request) {
-        return null;
+        return mLruCache.get(request.getImageUriMD5());
     }
 
     @Override
-    public boolean put(BitmapRequest request, Bitmap bitmap) {
-        return false;
+    public void put(BitmapRequest request, Bitmap bitmap) {
+        mLruCache.put(request.getImageUriMD5(),bitmap);
     }
 
     @Override
-    public boolean remove(BitmapRequest request) {
-        return false;
+    public void remove(BitmapRequest request) {
+        mLruCache.remove(request.getImageUriMD5());
     }
 }

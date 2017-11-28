@@ -1,7 +1,9 @@
 package com.sinieco.lib_imageloader.config;
 
 import com.sinieco.lib_imageloader.cache.BitmapCache;
+import com.sinieco.lib_imageloader.cache.NoCache;
 import com.sinieco.lib_imageloader.policy.LoaderPolicy;
+import com.sinieco.lib_imageloader.policy.SerialPolicy;
 
 /**
  * @author BaiMeng on 2017/11/22.
@@ -9,9 +11,9 @@ import com.sinieco.lib_imageloader.policy.LoaderPolicy;
 
 public class ImageLoaderConfig {
     //缓存策略
-    private BitmapCache cachePolicy  ;
+    private BitmapCache cachePolicy = new NoCache();
     //加载策略（顺序加载还是倒序加载）
-    private LoaderPolicy loaderPolicy ;
+    private LoaderPolicy loaderPolicy = new SerialPolicy();
     //线程数默认是CPU核心数
     private int threadCount = Runtime.getRuntime().availableProcessors();
     //图片加载中和加载失败的占为图

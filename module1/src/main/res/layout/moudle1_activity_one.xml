@@ -3,10 +3,9 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:gravity="center"
+    <ImageView
+        android:id="@+id/img_first"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="第一个Activity"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -9,6 +9,7 @@ import com.sinieco.lib_imageloader.policy.LoaderPolicy;
 import com.sinieco.lib_imageloader.utils.MD5Utils;
 
 import java.lang.ref.SoftReference;
+import java.util.Random;
 
 /**
  * @author BaiMeng on 2017/11/22.
@@ -28,12 +29,13 @@ public class BitmapRequest implements Comparable<BitmapRequest>{
         this.imageViewSoft = new SoftReference<ImageView>(img);
         //设置tag防止显示错乱
         img.setTag(uri);
-        this.imageUri = uri ;
-        this.imageUriMD5 = MD5Utils.toMD5(imageUri);
-        if(displayConfig != null){
-            this.displayConfig = displayConfig ;
+        this.imageUri = uri;
+        //this.imageUriMD5 = MD5Utils.toMD5(imageUri);
+        this.imageUriMD5 = getKey();
+        if (displayConfig != null) {
+            this.displayConfig = displayConfig;
         }
-        this.listener = listener ;
+        this.listener = listener;
     }
 
     @Override
@@ -103,5 +105,23 @@ public class BitmapRequest implements Comparable<BitmapRequest>{
 
     public ImageView getImageView(){
         return imageViewSoft.get();
+    }
+
+    public String getImageUriMD5() {
+        return imageUriMD5;
+    }
+
+    public SimpleImageLoader.ImageListener getImageListener() {
+        return listener;
+    }
+
+    public void setImageListener(SimpleImageLoader.ImageListener listener) {
+        this.listener = listener;
+    }
+
+    public String getKey() {
+        Random random = new Random();
+        int i = random.nextInt();
+        return "key"+i;
     }
 }
