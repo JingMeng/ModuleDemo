@@ -2,40 +2,26 @@ package com.sinieco.moudle1;
 
 
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.renderscript.Sampler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.sinieco.lib_db.BaseDao;
 import com.sinieco.lib_db.BaseDaoFactory;
 import com.sinieco.lib_db.User;
 import com.sinieco.lib_db.UserDao;
-import com.sinieco.lib_volley.volley.JsonDealListener;
-import com.sinieco.lib_volley.volley.Volley;
-import com.sinieco.lib_volley.volley.download.DownLoadItemInfo;
 import com.sinieco.lib_volley.volley.download.DownloadStatus;
 import com.sinieco.lib_volley.volley.download.FileDownManager;
 import com.sinieco.lib_volley.volley.download.inter.IDownloadCallback;
-import com.sinieco.lib_volley.volley.download.inter.IDownloadServiceCallback;
-import com.sinieco.lib_volley.volley.inter.IDataListener;
 import com.sinieco.moduledemo.utils.LogUtils;
 import com.sinieco.moduledemo.utils.XPermissionUtils;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish() ;
             }
         });
+        User user = new User("张三","123456",1.75,true,null);
+        String str = FastJson.toJson(user);
+        Log.e("USER ======   ",str) ;
     }
 
 

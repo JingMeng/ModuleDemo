@@ -50,4 +50,5 @@ dependencies {
     compile project(':lib_volley')
     compile project(':lib_db')
     compile project(':lib_imageloader')
+    compile project(':lib_json')
 }

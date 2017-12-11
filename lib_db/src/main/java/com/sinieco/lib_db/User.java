@@ -10,6 +10,30 @@ import java.lang.annotation.Target;
  */
 @TableName("tb_user")
 public class User {
+    public void setLength(Double length) {
+        this.length = length;
+    }
+
+    public Boolean getMarried() {
+        return isMarried;
+    }
+
+    public void setMarried(Boolean married) {
+        isMarried = married;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public void setLoginStatus(Integer loginStatus) {
+        this.loginStatus = loginStatus;
+    }
+
     @ColumnName("tb_name")
     public String name ;
     public String password ;
