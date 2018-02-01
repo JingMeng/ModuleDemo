@@ -46,6 +46,12 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
     private Class<T> mEntityClass;
     private HashMap<String ,Field> cacheMap ;
 
+    /**
+     * 初始化数据库，建表，缓存列名
+     * @param entityClass
+     * @param sqLiteDatabase
+     * @return
+     */
     protected synchronized boolean init(Class<T> entityClass, SQLiteDatabase sqLiteDatabase) {
         if(!mIsInit){
             mEntityClass = entityClass;
@@ -70,26 +76,37 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
         return mIsInit ;
     }
 
+    /**
+     * 拼接建表语句
+     * @param cla
+     * @return
+     */
     public String createTable(Class<T> cla) {
         Field[] fields = cla.getFields();
         String tableName = cla.getAnnotation(TableName.class)==null?cla.getSimpleName():cla.getAnnotation(TableName.class).value();
         StringBuffer sb = new StringBuffer("create table if not exists "+tableName+"(");
         for (Field field : fields) {
-            String columnName = null ;
-            field.setAccessible(true);
-            if(field.getAnnotation(ColumnName.class)!=null){
-                columnName = field.getAnnotation(ColumnName.class).value();
-            }else {
-                columnName = field.getName() ;
+            //过滤掉编译器添加的$change变量
+            if(!field.isSynthetic()){
+                String columnName = null ;
+                field.setAccessible(true);
+                if(field.getAnnotation(ColumnName.class)!=null){
+                    columnName = field.getAnnotation(ColumnName.class).value();
+                }else {
+                    columnName = field.getName() ;
+                }
+                String typeString = getTypeString(field);
+                sb.append(columnName+typeString+",");
             }
-            String typeString = getTypeString(field);
-            sb.append(columnName+typeString+",");
         }
         int i = sb.lastIndexOf(",");
         sb.replace(i,i+1,")");
         return sb.toString();
     }
 
+    /**
+     * 缓存列名
+     */
     protected void initCacheMap(){
         //从第一条数据开始，查询0条数据，用于获取所有的列名
         String sql = "select * from "+mTableName+" limit 1 , 0" ;
@@ -156,12 +173,14 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
             Field field = iterator.next();
             String cacheKey = null ;
             String cacheValue = null ;
+            //开发者可能会使用注解，也可能没有使用，如果没有使用就默认用变量名作为列名
             if(field.getAnnotation(ColumnName.class)!=null){
                 cacheKey = field.getAnnotation(ColumnName.class).value();
             }else {
                 cacheKey = field.getName() ;
             }
             try {
+                //如果变量值为null，跳过此变量
                 if(null == field.get(entity)){
                     continue;
                 }
@@ -169,11 +188,17 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+            //缓存此变量
             result.put(cacheKey,cacheValue);
         }
         return result ;
     }
 
+    /**
+     * 将数据类型转换为Sqlite可以识别的类型字符串
+     * @param field
+     * @return
+     */
     public String getTypeString(Field field) {
         Class<?> type = field.getType();
         if (type == String.class || type == CharSequence.class) {
@@ -245,6 +270,7 @@ public abstract class BaseDao<T> implements IBaseDao<T> {
         return getListFromCursor(cursor,t);
     }
 
+    //将查询到的Cursor转换为List集合
     private List<T> getListFromCursor(Cursor cursor,T where) {
         ArrayList<T> list = new ArrayList<T>();
         if (cursor != null) {

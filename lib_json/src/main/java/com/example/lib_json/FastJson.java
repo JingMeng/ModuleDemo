@@ -28,9 +28,15 @@ public class FastJson {
         Class<?> jsonClass = null ;
         //以[开头的是json数组，以{开头的是json对象
         if(json.charAt(0) == '['){
+            try {
+                object = toList(json,clazz);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
         }else if(json.charAt(0) == '{') {
             try {
+                object = clazz.newInstance();
                 JSONObject jsonObject = new JSONObject(json);
                 Iterator<?> iterator = jsonObject.keys();
                 while (iterator.hasNext()){
@@ -53,7 +59,7 @@ public class FastJson {
                     }
                 }
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 try {
                     throw new JSONException("json字符串不合法");
                 } catch (JSONException e1) {
@@ -106,7 +112,7 @@ public class FastJson {
                         ParameterizedType parameterizedType = (ParameterizedType) fieldType ;
                         Type[] fieldArgType = parameterizedType.getActualTypeArguments();
                         for (Type type : fieldArgType) {
-                            Class<?> fieldArgClass = type.getClass();
+                            Class<?> fieldArgClass = (Class<?>) type;
                             filedValue = toList(jsonValue,fieldArgClass);
                         }
                     }
@@ -138,7 +144,7 @@ public class FastJson {
                     break;
             }
         }
-        return null;
+        return list;
     }
 
     private static int getJSONType(String jsonValue) {

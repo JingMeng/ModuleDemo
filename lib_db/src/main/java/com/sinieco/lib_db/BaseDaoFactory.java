@@ -21,6 +21,7 @@ public class BaseDaoFactory {
     private SQLiteDatabase mSqLiteDatabase;
     //储存具体用户数据的数据（每个用户一个数据库）
     private SQLiteDatabase userSQLiteDatabase ;
+    //线程安全的HashMap
     private Map<String,BaseDao> map = Collections.synchronizedMap(new HashMap<String, BaseDao>());
 
     private BaseDaoFactory(){
@@ -45,9 +46,18 @@ public class BaseDaoFactory {
         return mInstance ;
     }
 
+    /**
+     * 获取具体的UserDao对象
+     * @param daoClass
+     * @param entityClass
+     * @param <T>
+     * @param <M>
+     * @return
+     */
     public synchronized <T extends BaseDao<M>,M>  T
         getDataHelper(Class<T> daoClass,Class<M> entityClass){
         BaseDao baseDao = null ;
+        //首先看所需的Dao是否缓存过
         if(map.get(daoClass.getSimpleName())!=null){
             return (T) map.get(daoClass.getSimpleName());
         }

@@ -2,7 +2,10 @@ package com.sinieco.moudle1;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.example.lib_json.FastJson;
 import com.sinieco.lib_db.BaseDao;
 import com.sinieco.lib_db.BaseDaoFactory;
 import com.sinieco.lib_db.User;
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                Log.e("失败",e.toString());
 //            }
 //        });
-        userDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
+
 
 
         XPermissionUtils.requestPermissions(this, 0, new String[]{
@@ -75,9 +79,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish() ;
             }
         });
+
+        userDao = BaseDaoFactory.getInstance().getDataHelper(UserDao.class,User.class);
+
         User user = new User("张三","123456",1.75,true,null);
         String str = FastJson.toJson(user);
         Log.e("USER ======   ",str) ;
+        User object = (User)FastJson.parseObject(str,User.class);
+        Log.e("FastJson 解析对象  ====  " , object.toString());
+
+        PackageManager packageManager = getPackageManager();
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(),0);
+
+            Log.e("版本号为:","  "+getPackageName());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -26,6 +26,7 @@ public class UrlLoader extends AbstarctLoader {
         InputStream is = null ;
         try {
             connection = (HttpURLConnection) new URL(request.getImageUri()).openConnection();
+            int code = connection.getResponseCode();
             is = new BufferedInputStream(connection.getInputStream());
             //从可用的字节开始（排除图片信息占用的字节）
             is.mark(is.available());
@@ -38,7 +39,7 @@ public class UrlLoader extends AbstarctLoader {
                      */
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream,null,potions);
                     if(potions.inJustDecodeBounds){
-                        //第一次读流后重置
+                        //第一次读流后将游标重置
                         try {
                             inputStream.reset();
                         } catch (IOException e) {
@@ -56,6 +57,7 @@ public class UrlLoader extends AbstarctLoader {
                 }
             };
             return decoder.decodeBitmap(ImageViewHelper.getImageViewWidth(request.getImageView()),ImageViewHelper.getImageViewHeight(request.getImageView()));
+
         } catch (IOException e) {
             e.printStackTrace();
         }finally {

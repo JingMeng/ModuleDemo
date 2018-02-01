@@ -2,7 +2,7 @@ package com.sinieco.moduledemo.utils;
 
 import android.util.Log;
 
-import com.sinieco.module_app.BuildConfig;
+import com.sinieco.module_common.BuildConfig;
 
 
 /**

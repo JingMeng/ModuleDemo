@@ -1,6 +1,8 @@
 package com.sinieco.lib_imageloader.loader;
 
 import android.graphics.Bitmap;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.sinieco.lib_imageloader.cache.BitmapCache;
@@ -34,16 +36,24 @@ public abstract class AbstarctLoader implements Loader {
     }
 
     private void deliveryToUIThread(final BitmapRequest request, final Bitmap bitmap) {
-        ImageView imageView = request.getImageView();
-        imageView.post(new Runnable() {
-            @Override
-            public void run() {
-                updateImageView(request,bitmap);
-            }
-        });
+
+        final ImageView imageView = request.getImageView();
+        try {
+            Thread.sleep(20);
+            imageView.post(new Runnable() {
+                @Override
+                public void run() {
+                    updateImageView(request,bitmap);
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     protected void updateImageView(BitmapRequest request, Bitmap bitmap){
+        int size = bitmap.getByteCount();
         ImageView imageView = request.getImageView();
         if(bitmap != null && imageView.getTag().equals(request.getImageUri())){
             imageView.setImageBitmap(bitmap);

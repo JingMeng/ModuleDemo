@@ -59,7 +59,9 @@ public class DiskCache implements BitmapCache {
     private int getAppVersion(Context context) {
         PackageManager packageManager = context.getPackageManager();
         try {
-            return packageManager.getPackageInfo("com.sinieco.myjnideom",0).versionCode;
+           // return packageManager.getPackageInfo("com.sinieco.lib_imageloader",0).versionCode;
+            Log.e("包名：",context.getPackageName());
+            return packageManager.getPackageInfo(context.getPackageName(),0).versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

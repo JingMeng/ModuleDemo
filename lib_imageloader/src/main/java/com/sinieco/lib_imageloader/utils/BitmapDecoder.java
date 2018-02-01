@@ -23,14 +23,15 @@ public abstract class BitmapDecoder {
         Options options = new Options();
         //设置只读取边界
         options.inJustDecodeBounds = true ;
-        //第一次获取Bitmap
+        //第一次通过流获取Bitmap
         decodeBitmapWithOptions(options);
         //计算图片缩放比例
         calculateSampleSizeWithOptions(options,reqWidth,reqHeight);
-        //第二次获取Bitmap
+        //第二次通过流获取Bitmap
         return decodeBitmapWithOptions(options) ;
     }
 
+    //计算宽高并给Options设置缩放比例
     private void calculateSampleSizeWithOptions(Options options, int reqWidth, int reqHeight) {
         int width = options.outWidth ;
         int height = options.outHeight ;
